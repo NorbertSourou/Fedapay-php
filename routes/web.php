@@ -14,4 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('/payer', [PayoutController::class, 'post'])->name('payer');
-Route::get('/', [PayoutController::class, 'test'])->name('get');
+Route::get('/success', [PayoutController::class, 'success'])->name('success');
+Route::match(array('GET', 'POST'), '/', [PayoutController::class, 'test'])->name('get');

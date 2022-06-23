@@ -12,23 +12,50 @@ class PayoutController extends Controller
 {
     public function test(Request $request)
     {
-        FedaPay::setApiKey("sk_live_kZMWB00Uv85DaiVP2eO9a1-f");
+        FedaPay::setApiKey("sk_sandbox_ydYVQT90YvAEMqu_x3OMIZfb");
 
         /* Specify whenever you are willing to execute your request in test or live mode */
-        FedaPay::setEnvironment('live'); //or se
+        FedaPay::setEnvironment('sandbox'); //or se
+        $validate = $request->payer;
+        $name = $request->firstname;
+        $numero = $request->numero;
+        $montant = $request->montant;
+        if (isset($validate)) {
+            $transaction = Transaction::create(array(
+                "description" => "Transaction for john.doe@example.com",
+                "amount" => $montant,
+                "currency" => ["iso" => "XOF"],
+                "callback_url" => "",
+                "customer" => [
+                    "firstname" => "$name",
+                    "lastname" => "Doe",
+                    "email" => "john.doe@example.com",
+                    "phone_number" => [
+//                    "number" => "+22997808080",
+                        "number" => "+229" . $numero,
+                        "country" => "bj"
+                    ]
+                ]
+            ));
+            $token = $transaction->generateToken();
+//        dd('Location: ' . $token->url);
+            return Redirect::away($token->url);
+        }
+
+
         $transactionId = $request->id;
         if ($transactionId) {
             $transaction = Transaction::retrieve($transactionId);
 //            dd($transaction->status);
             if ($transaction->status == "approved") {
-                echo "Payment approved";
+                return redirect()->route('success');
+
             }
             if ($transaction->status == "pending") {
                 return redirect()->route('get');
                 // echo "Payment approved";
             }
             if ($transaction->status == "canceled") {
-                dd("dfg");
                 return redirect()->route('get');
             }
         }
@@ -39,14 +66,14 @@ class PayoutController extends Controller
     public
     function post(Request $request)
     {
-        $name=$request->firstname;
-        $numero=$request->numero;
-        $montant=$request->montant;
+        $name = $request->firstname;
+        $numero = $request->numero;
+        $montant = $request->montant;
 //        dd('hello');
-        FedaPay::setApiKey("sk_live_kZMWB00Uv85DaiVP2eO9a1-f");
+        FedaPay::setApiKey("pk_sandbox_4C6cErct8uAcha5_Hp4f8zEu");
 
         /* Specify whenever you are willing to execute your request in test or live mode */
-        FedaPay::setEnvironment('live'); //or setEnvironment('live');
+        FedaPay::setEnvironment('sandbox'); //or setEnvironment('live');
 
         /* Create the transaction */
         $transaction = Transaction::create(array(
@@ -60,7 +87,7 @@ class PayoutController extends Controller
                 "email" => "john.doe@example.com",
                 "phone_number" => [
 //                    "number" => "+22997808080",
-                    "number" => "+229".$numero,
+                    "number" => "+229" . $numero,
                     "country" => "bj"
                 ]
             ]
@@ -71,4 +98,30 @@ class PayoutController extends Controller
 //        dd($transaction);
     }
 
+    public function success(Request $request)
+    {
+        FedaPay::setApiKey("sk_sandbox_ydYVQT90YvAEMqu_x3OMIZfb");
+
+        /* Specify whenever you are willing to execute your request in test or live mode */
+        FedaPay::setEnvironment('sandbox');
+        $transactionId = $request->id;
+        if ($transactionId) {
+            $transaction = Transaction::retrieve($transactionId);
+//            dd($transaction->status);
+            if ($transaction->status == "approved") {
+                return redirect()->route('success');
+            }
+            if ($transaction->status == "pending") {
+                return redirect()->route('get');
+                // echo "Payment approved";
+            }if ($transaction->status == "declined") {
+                return redirect()->route('get');
+                // echo "Payment approved";
+            }
+            if ($transaction->status == "canceled") {
+                return redirect()->route('get');
+            }
+        }
+        return view('success');
+    }
 }

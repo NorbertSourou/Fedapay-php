@@ -7,12 +7,12 @@
     <title>Document</title>
 </head>
 <body>
-<form action="{{route('payer')}}" method="post">
+<form action="" method="post">
     @csrf
-    <input name="firstname" placeholder="Noms" type="text">
-    <input name="numero" placeholder="numero" type="tel">
-    <input name="montant" placeholder="montant" type="text">
-    <button type="submit" name="isValidate">Payer</button>
+    <input  required name="firstname" placeholder="Noms" type="text">
+    <input  required name="numero" placeholder="numero" type="tel">
+    <input required  name="montant" placeholder="montant" type="text">
+    <button type="submit" name="payer" value="payer">Payer</button>
 </form>
 </body>
 </html>
