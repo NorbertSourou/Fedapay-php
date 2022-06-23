@@ -62,7 +62,7 @@ class PayoutController extends Controller
         //
         return view('welcome');
     }
-
+// Ne regarde pas
     public
     function post(Request $request)
     {

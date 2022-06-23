@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+// Ne regarde pas
 Route::post('/payer', [PayoutController::class, 'post'])->name('payer');
+
+
+
 Route::get('/success', [PayoutController::class, 'success'])->name('success');
 Route::match(array('GET', 'POST'), '/', [PayoutController::class, 'test'])->name('get');
